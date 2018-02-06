@@ -17,6 +17,7 @@ class Artist(models.Model):
     img_profile = models.ImageField(
         '프로필 이미지',
         upload_to='artist',
+        blank=True,
     )
     name = models.CharField(
         '이름',
@@ -32,7 +33,7 @@ class Artist(models.Model):
         max_length=50,
         blank=True,
     )
-    birth_date = models.DateTimeField(
+    birth_date = models.DateField(
         '생년월일',
         blank=True,
         null=True,
