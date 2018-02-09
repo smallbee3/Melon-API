@@ -22,7 +22,8 @@ class Album(models.Model):
     @property
     def genre(self):
         # 장르는 가지고 있는 노래들에서 가져오기
-        return ''
+        # ex) Ballad, Dance
+        return ', '.join(self.song_set.values_list('genre', flat=True).distinct())
 
     def __str__(self):
         return '{title} [{artists}]'.format(
