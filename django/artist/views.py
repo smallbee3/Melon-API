@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from .models import Artist
 
@@ -42,7 +42,15 @@ def artist_add(request):
     # 2. aritst_add.html에 form을 하나 생성
     #       input은 name이 'name'인 요소 한개만 생성
     #       POST방식으로 전송 후, 전달받은 'name'값을 바로 HttpResponse로 보여주기
+
+    # 3. 전송받은 name을 이용해서 Artist를 생성
+    #       이후 'artist:artist-list'로 redirect
+
     if request.method == 'POST':
-        pass
+        name = request.POST['name']
+        Artist.objects.create(
+            name=name,
+        )
+        return redirect('artist:artist-list')
     else:
         return render(request, 'artist/artist_add.html')
