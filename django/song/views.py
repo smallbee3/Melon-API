@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render
 
 from .models import Song
@@ -49,13 +50,29 @@ def song_search(request):
     :return:
     """
     context = {}
+    # Song과 연결된 Artist의 name에 keyword가 포함되는 경우
+    # Song과 연결된 Album의 title에 keyword가 포함되는 경우
+    # Song의 title에 keyword가 포함되는 경우
+    #   를 모두 포함(or -> Q object)하는 쿼리셋을 'songs'에 할당
+
+    # songs_from_artists
+    # songs_from_albums
+    # songs_from_title
+    #  위 세 변수에 더 위의 조건 3개에 부합하는 쿼리셋을 각각 전달
+    #  세 변수를 이용해 검색 결과를 3단으로 분리해서 출력
+    #  -> 아티스트로 검색한 노래 결과, 앨범으로 검색한 노래 결과, 제목으로 검색한 노래 결과
+
     if request.method == 'POST':
         # POST요청에 전달된 데이터(input요소의 값들)중, name이 'keyword'인 input의 값
         keyword = request.POST['keyword'].strip()
         # keyword에 빈 값이 올 경우 결과 QuerySet을 할당하지 않도록 수정
         if keyword:
             # Song목록 중 title이 keyword를 포함하는 쿼리셋
-            songs = Song.objects.filter(title__contains=keyword)
+            songs = Song.objects.filter(
+                Q(album__title__contains=keyword) |
+                Q(album__artists__name__contains=keyword) |
+                Q(title__contains=keyword)
+            ).distinct()
             # 미리 선언한 context의 'songs'키에 QuerySet을 할당
             context['songs'] = songs
     # 만약 method가 POST였다면 context에 'songs'가 채워진 상태,
