@@ -77,4 +77,5 @@ def song_search(request):
         # Song의 title에 keyword가 포함되는 경우
         songs_from_title = Song.objects.filter(title__contains=keyword)
         context['songs_from_title'] = songs_from_title
+    context['type'] = 'ASDF'
     return render(request, 'song/song_search.html', context)
