@@ -75,6 +75,20 @@ def song_search(request):
             ).distinct()
             # 미리 선언한 context의 'songs'키에 QuerySet을 할당
             context['songs'] = songs
+
+            # Song과 연결된 Artist의 name에 keyword가 포함되는 경우
+            songs_from_artists = Song.objects.filter(
+                album__artists__name__contains=keyword
+            )
+            context['songs_from_artists'] = songs_from_artists
+
+            # Song과 연결된 Album의 title에 keyword가 포함되는 경우
+            songs_from_albums = Song.objects.filter(album__title__contains=keyword)
+            context['songs_from_albums'] = songs_from_albums
+
+            # Song의 title에 keyword가 포함되는 경우
+            songs_from_title = Song.objects.filter(title__contains=keyword)
+            context['songs_from_title'] = songs_from_title
     # 만약 method가 POST였다면 context에 'songs'가 채워진 상태,
     # GET이면 빈 상태로 render실행
     return render(request, 'song/song_search.html', context)
