@@ -14,6 +14,13 @@ class Artist(models.Model):
         (BLOOD_TYPE_AB, 'AB형'),
         (BLOOD_TYPE_OTHER, '기타'),
     )
+    melon_id = models.CharField(
+        '멜론 Artist ID',
+        max_length=20,
+        blank=True,
+        null=True,
+        unique=True,
+    )
     img_profile = models.ImageField(
         '프로필 이미지',
         upload_to='artist',

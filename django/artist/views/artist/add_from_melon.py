@@ -1,3 +1,10 @@
+from datetime import datetime
+
+from django.shortcuts import redirect
+
+from crawler.artist import ArtistData
+from ...models import Artist
+
 __all__ = (
     'artist_add_from_melon',
 )
@@ -34,4 +41,36 @@ def artist_add_from_melon(request):
     :return:
     """
     if request.method == 'POST':
-        print(request.POST)
+        artist_id = request.POST['artist_id']
+        artist = ArtistData(artist_id)
+        artist.get_detail()
+
+        name = artist.name
+        real_name = artist.personal_information.get('본명', '')
+        nationality = artist.personal_information.get('국적', '')
+        birth_date_str = artist.personal_information.get('생일', '')
+        constellation = artist.personal_information.get('별자리', '')
+        blood_type = artist.personal_information.get('혈액형', '')
+
+        for short, full in Artist.CHOICES_BLOOD_TYPE:
+            if blood_type.strip() == full:
+                blood_type = short
+                break
+        else:
+            blood_type = Artist.BLOOD_TYPE_OTHER
+
+        # artist_id가 melon_id에 해당하는 Artist가 이미 있다면
+        #   해당 Artist의 내용을 update
+        # 없으면 Artist를 생성
+        Artist.objects.update_or_create(
+            melon_id=artist_id,
+            defaults={
+                'name': name,
+                'real_name': real_name,
+                'nationality': nationality,
+                'birth_date': datetime.strptime(birth_date_str, '%Y.%m.%d'),
+                'constellation': constellation,
+                'blood_type': blood_type,
+            }
+        )
+        return redirect('artist:artist-list')
