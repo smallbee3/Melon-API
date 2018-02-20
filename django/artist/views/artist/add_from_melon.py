@@ -1,6 +1,9 @@
 from datetime import datetime
 
+import requests
+from django.core.files import File
 from django.shortcuts import redirect
+from io import BytesIO
 
 from crawler.artist import ArtistData
 from ...models import Artist
@@ -46,11 +49,14 @@ def artist_add_from_melon(request):
         artist = ArtistData(artist_id)
         artist.get_detail()
         name = artist.name
+        url_img_cover = artist.url_img_cover
         real_name = artist.personal_information.get('본명', '')
         nationality = artist.personal_information.get('국적', '')
         birth_date_str = artist.personal_information.get('생일', '')
         constellation = artist.personal_information.get('별자리', '')
         blood_type = artist.personal_information.get('혈액형', '')
+
+        # blood_type과 birth_date_str이 없을때 처리할것
 
         # 튜플의 리스트를 순회하며 blood_type을 결정
         for short, full in Artist.CHOICES_BLOOD_TYPE:
@@ -66,7 +72,13 @@ def artist_add_from_melon(request):
         # artist_id가 melon_id에 해당하는 Artist가 이미 있다면
         #   해당 Artist의 내용을 update
         # 없으면 Artist를 생성
-        Artist.objects.update_or_create(
+        response = requests.get(url_img_cover)
+        binary_data = response.content
+        temp_file = BytesIO()
+        temp_file.write(binary_data)
+        temp_file.seek(0)
+
+        artist, _ = Artist.objects.update_or_create(
             melon_id=artist_id,
             defaults={
                 'name': name,
@@ -77,4 +89,7 @@ def artist_add_from_melon(request):
                 'blood_type': blood_type,
             }
         )
+        from pathlib import Path
+        file_name = Path(url_img_cover).name
+        artist.img_profile.save(file_name, File(temp_file))
         return redirect('artist:artist-list')
