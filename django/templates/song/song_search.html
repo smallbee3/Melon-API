@@ -2,8 +2,13 @@
 
 {% block content %}
 <div>
-	<form action="" method="post">
-		{% csrf_token %}
+	<h1><a href="{% url 'song:song-search' %}">노래 검색</a></h1>
+	<!--
+		1. song/urls.py에 app_name지정
+		2. 각 path에 name지정
+		3. <app_name>:<url_name> 형식을 사용
+	-->
+	<form action="" method="get">
 		<input type="text" name="keyword">
 		<button type="submit">검색</button>
 	</form>
