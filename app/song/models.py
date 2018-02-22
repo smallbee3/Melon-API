@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 
 from album.models import Album
 from artist.models import Artist
@@ -18,17 +18,22 @@ class SongManager(models.Manager):
         """
         song_data = SongData(song_id)
         song_data.get_detail()
-        song, song_created = self.update_or_create(
-            melon_id=song_id,
-            defaults={
-                'title': song_data.title,
-                'genre': song_data.genre,
-                'lyrics': song_data.lyrics,
-            }
-        )
-        artist, _ = Artist.objects.update_or_create_from_melon(song_data.artist_id)
-        song.artists.add(artist)
-        return song, song_created
+
+        with transaction.atomic():
+            album, _ = Album.objects.update_or_create_from_melon(song_data.album_id)
+            artist, _ = Artist.objects.update_or_create_from_melon(song_data.artist_id)
+            song, song_created = self.update_or_create(
+                melon_id=song_id,
+                defaults={
+                    'title': song_data.title,
+                    'genre': song_data.genre,
+                    'lyrics': song_data.lyrics,
+                    'album': album,
+                }
+            )
+
+            song.artists.add(artist)
+            return song, song_created
 
 
 class Song(models.Model):
