@@ -2,6 +2,30 @@ from django.db import models
 
 from album.models import Album
 from artist.models import Artist
+from crawler.song import SongData
+
+
+class SongManager(models.Manager):
+    def update_or_create_from_melon_id(self, song_id):
+        """
+        song_id에 해당하는 Song정보를 멜론사이트에서 가져와 update_or_create를 실행
+        이 때, 해당 Song의 Artist정보도 가져와 ArtistManager.update_or_create_from_melon도 실행
+        :param song_id: 멜론 사이트에서의 곡 고유 ID
+        :return: (Song instance, Bool(Song created))
+        """
+        song_data = SongData(song_id)
+        song_data.get_detail()
+        song, song_created = self.update_or_create(
+            melon_id=song_id,
+            defaults={
+                'title': song_data.title,
+                'genre': song_data.genre,
+                'lyrics': song_data.lyrics,
+            }
+        )
+        artist, _ = Artist.objects.update_or_create_from_melon(song_data.artist_id)
+        song.artists.add(artist)
+        return song, song_created
 
 
 class Song(models.Model):
@@ -30,6 +54,8 @@ class Song(models.Model):
         '가사',
         blank=True,
     )
+
+    objects = SongManager()
 
     @property
     def release_date(self):
