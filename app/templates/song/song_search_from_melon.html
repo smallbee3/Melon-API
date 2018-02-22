@@ -15,7 +15,7 @@
 				<span>{{ song_info.song_id }} | {{ song_info.title }}</span>
 			</div>
 			<div>{{ song_info.artist }}</div>
-			<form action="" method="POST">
+			<form action="{% url 'song:song-add-from-melon' %}" method="POST">
 				{% csrf_token %}
 				<input type="hidden" name="song_id" value="{{ song_info.song_id }}">
 				<button type="submit">DB에 추가하기</button>

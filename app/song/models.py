@@ -4,6 +4,7 @@ from album.models import Album
 
 
 class Song(models.Model):
+    melon_id = models.CharField('멜론 Song ID', max_length=20, blank=True, null=True, unique=True)
     album = models.ForeignKey(
         Album,
         verbose_name='앨범',
@@ -43,8 +44,10 @@ class Song(models.Model):
         # TWICE(트와이스) - Heart Shaker (Merry & Happy)
         # 휘성, 김태우 - 호호호빵 (호호호빵)
         #  artists는 self.album의 속성
-        return '{artists} - {title} ({album})'.format(
-            artists=', '.join(self.album.artists.values_list('name', flat=True)),
-            title=self.title,
-            album=self.album.title,
-        )
+        if self.album:
+            return '{artists} - {title} ({album})'.format(
+                artists=', '.join(self.album.artists.values_list('name', flat=True)),
+                title=self.title,
+                album=self.album.title,
+            )
+        return self.title

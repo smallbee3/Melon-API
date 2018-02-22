@@ -13,4 +13,7 @@ urlpatterns = [
     path('search/melon/',
          views.song_search_from_melon,
          name='song-search-from-melon'),
+    path('search/melon/add/',
+         views.song_add_from_melon,
+         name='song-add-from-melon'),
 ]
