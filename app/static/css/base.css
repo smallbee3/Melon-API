@@ -9,3 +9,26 @@ html, body {
 body {
   border-top: 3px solid #04c944;
 }
+
+.content-block {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+  color: #7cb710;
+}
+
+.clearfix::after {
+  content: '';
+  height: 0;
+  clear: both;
+  display: block;
+}

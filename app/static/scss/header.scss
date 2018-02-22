@@ -1,3 +1,6 @@
+.header-wrap {
+  border-bottom: 1px solid #999;
+}
 header.main-header {
   width: 1000px;
   margin: 0 auto;
@@ -25,4 +28,18 @@ header.main-header {
       
     }
   }  
+}
+header.main-header > nav.main-header-nav {
+  > ul {
+    > li {
+      float: left;
+      > a {
+        display: inline-block;
+        padding: 8px 16px;
+        font-size: 1.3rem;
+        color: #333;
+        font-weight: bold;
+      }
+    }
+  }
 }
