@@ -10,4 +10,7 @@ urlpatterns = [
     path('search/',
          views.song_search,
          name='song-search'),
+    path('search/melon/',
+         views.song_search_from_melon,
+         name='song-search-from-melon'),
 ]
