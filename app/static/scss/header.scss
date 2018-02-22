@@ -1,0 +1,28 @@
+header.main-header {
+  width: 1000px;
+  margin: 0 auto;
+  
+  > .search-container {
+    > .input-container {
+      margin: 36px 0 0 11px;
+      vertical-align: top;
+      display: inline-block;
+      width: 322px;
+      height: 40px;
+      background: url(/static/images/bg_search.png);
+      z-index: 15;
+      
+      > input {
+        border: 0;
+        font-size: 12px;
+        height: 20px;
+        line-height: 20px;
+        color: #999;
+        margin: 7px 0 0 18px;
+        padding-top: 3px;
+        padding-left: 0;
+      }
+      
+    }
+  }  
+}

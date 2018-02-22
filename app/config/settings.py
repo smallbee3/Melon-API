@@ -13,15 +13,20 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-# melon/django를 가리킴
+# melon/app을 가리킴
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
 # Static
 # User-uploaded file들이 저장될 위치
 MEDIA_ROOT = os.path.join(ROOT_DIR, '.media')
 MEDIA_URL = '/media/'
+# 프로젝트 정적파일들을 검색({% static %})할 디렉토리 목록
+STATICFILES_DIRS = [
+    STATIC_DIR,
+]
 STATIC_URL = '/static/'
 
 # Quick-start development settings - unsuitable for production
