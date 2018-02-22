@@ -1,3 +1,4 @@
+import re
 import requests
 from bs4 import BeautifulSoup, NavigableString
 
@@ -12,6 +13,8 @@ class SongData:
         self.title = title
         self.artist = artist
         self.album = album
+        self.artist_id = None
+        self.album_id = None
 
         self._release_date = None
         self._lyrics = None
@@ -43,17 +46,24 @@ class SongData:
         div_entry = soup.find('div', class_='entry')
         title = div_entry.find('div', class_='song_name').strong.next_sibling.strip()
         artist = div_entry.find('div', class_='artist').get_text(strip=True)
+        artist_id_href = div_entry.select_one('a.artist_name').get('href')
+        artist_id = re.search(r"Detail\('(\d+)'\)", artist_id_href).group(1)
         # 앨범, 발매일, 장르...에 대한 Description list
         dl = div_entry.find('div', class_='meta').find('dl')
         # isinstance(인스턴스, 클래스(타입))
         # items = ['앨범', '앨범명', '발매일', '발매일값', '장르', '장르값']
-        items = [item.get_text(strip=True) for item in dl.contents if not isinstance(item, str)]
+
+        # dt, dd목록에서 dd는 get_text()가 아닌 요소 자체를 리스트에 추가
+        items = [item if item.name == 'dd' else item.get_text(strip=True) for item in dl.contents if not isinstance(item, str)]
         it = iter(items)
         description_dict = dict(zip(it, it))
 
-        album = description_dict.get('앨범')
-        release_date = description_dict.get('발매일')
-        genre = description_dict.get('장르')
+        # dd부분 (dict.get() 한 결과)는 Tag이므로 텍스트 가져올땐 get_text(), album_id가져올땐 a태그의 href를 사용
+        album = description_dict.get('앨범').get_text(strip=True)
+        album_id_href = description_dict.get('앨범').select_one('a').get('href')
+        album_id = re.search(r"Detail\('(\d+)'\)", album_id_href).group(1)
+        release_date = description_dict.get('발매일').get_text(strip=True)
+        genre = description_dict.get('장르').get_text(strip=True)
 
         div_lyrics = soup.find('div', id='d_video_summary')
 
@@ -71,6 +81,8 @@ class SongData:
         self.title = title
         self.artist = artist
         self.album = album
+        self.artist_id = artist_id
+        self.album_id = album_id
         self._release_date = release_date
         self._genre = genre
         self._lyrics = lyrics
