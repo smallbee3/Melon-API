@@ -1,6 +1,7 @@
 from django.db import models
 
 from album.models import Album
+from artist.models import Artist
 
 
 class Song(models.Model):
@@ -11,6 +12,11 @@ class Song(models.Model):
         on_delete=models.CASCADE,
         blank=True,
         null=True,
+    )
+    artists = models.ManyToManyField(
+        Artist,
+        verbose_name='아티스트 목록',
+        blank=True,
     )
     title = models.CharField(
         '곡 제목',
@@ -24,11 +30,6 @@ class Song(models.Model):
         '가사',
         blank=True,
     )
-
-    @property
-    def artists(self):
-        # self.album에 속한 전체 Artist의 QuerySet리턴
-        return self.album.artists.all()
 
     @property
     def release_date(self):
