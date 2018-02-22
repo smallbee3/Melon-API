@@ -10,6 +10,9 @@ class SongManager(models.Manager):
         """
         song_id에 해당하는 Song정보를 멜론사이트에서 가져와 update_or_create를 실행
         이 때, 해당 Song의 Artist정보도 가져와 ArtistManager.update_or_create_from_melon도 실행
+         그리고 해당 Song의 Album정보도 가져와서 AlbumManager.update_or_create_from_melon도 실행
+            -> Album의 커버이미지도 저장해야 함
+
         :param song_id: 멜론 사이트에서의 곡 고유 ID
         :return: (Song instance, Bool(Song created))
         """
