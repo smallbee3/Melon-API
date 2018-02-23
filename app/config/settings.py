@@ -39,7 +39,7 @@ SECRET_KEY = '_7+ljtll=#nxqj)#vc60@zdw&k$%96e6zx422yksyg@t)l&_ik'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+AUTH_USER_MODEL = 'members.User'
 # Application definition
 
 INSTALLED_APPS = [
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
     'album',
     'artist',
+    'members',
     'song',
 ]
 
