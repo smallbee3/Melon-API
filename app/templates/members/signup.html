@@ -8,6 +8,14 @@
 	</div>
 	<form action="" method="POST" class="clearfix">
 		{% csrf_token %}
+
+		{% if errors %}
+		<ul>
+			{% for error in errors %}
+			<li>{{ error }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
 		<div class="form-group clearfix">
 			<label for="username">아이디</label>
 			<input id="username" type="text" name="username">

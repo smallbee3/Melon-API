@@ -30,6 +30,11 @@ header.main-header {
   }  
 }
 header.main-header > nav.main-header-nav {
+  float: left;
+  
+  &.nav-right {
+    float: right;
+  }
   > ul {
     > li {
       float: left;
