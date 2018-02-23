@@ -54,6 +54,8 @@ class ArtistManager(models.Manager):
         # artist.img_profile필드의 save를 따로 호출, 이름과 File객체를 전달
         #   (Django)File객체의 생성에는 (Python)File객체를 사용,
         #           이 때 (Python)File객체처럼 취급되는 BytesIO를 사용
+        if artist.img_profile:
+            artist.img_profile.delete()
         artist.img_profile.save(file_name, File(temp_file))
         return artist, artist_created
 
