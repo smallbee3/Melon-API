@@ -1,12 +1,10 @@
 from datetime import datetime
-from io import BytesIO
-from pathlib import Path
 
-import requests
 from django.core.files import File
 from django.db import models
 
 from crawler.artist import ArtistData
+from utils.file import download, get_buffer_ext
 
 
 class ArtistManager(models.Manager):
@@ -34,17 +32,6 @@ class ArtistManager(models.Manager):
             # 기타 혈액형값으로 설정
             blood_type = Artist.BLOOD_TYPE_OTHER
 
-        # url_img_cover는 이미지의 URL
-        response = requests.get(url_img_cover)
-        # requests에 GET요청을 보낸 결과의 Binary data
-        binary_data = response.content
-        # 파일처럼 취급되는 메모리 객체 temp_file를 생성
-        temp_file = BytesIO()
-        # temp_file에 이진데이터를 기록
-        temp_file.write(binary_data)
-        # 파일객체의 포인터를 시작부분으로 되돌림
-        temp_file.seek(0)
-
         artist, artist_created = self.update_or_create(
             melon_id=artist_id,
             defaults={
@@ -57,8 +44,13 @@ class ArtistManager(models.Manager):
                 'blood_type': blood_type,
             }
         )
-        # img_profile필드에 저장할 파일명을 전체 URL경로에서 추출 (Path라이브러리)
-        file_name = Path(url_img_cover).name
+        # img_profile필드에 저장할 파일확장자를 바이너리 데이터 자체의 MIME_TYPE에서 가져옴
+        # 파일명은 artist_id를 사용
+        temp_file = download(url_img_cover)
+        file_name = '{artist_id}.{ext}'.format(
+            artist_id=artist_id,
+            ext=get_buffer_ext(temp_file),
+        )
         # artist.img_profile필드의 save를 따로 호출, 이름과 File객체를 전달
         #   (Django)File객체의 생성에는 (Python)File객체를 사용,
         #           이 때 (Python)File객체처럼 취급되는 BytesIO를 사용
