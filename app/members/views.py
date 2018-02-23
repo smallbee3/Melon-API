@@ -19,3 +19,19 @@ def login_view(request):
             login(request, user)
             return redirect('index')
     return render(request, 'members/login.html')
+
+
+def logout_view(request):
+    # /logout/
+    # 문서에서 logout <- django logout 검색
+    # GET요청이든 POST요청이든 상관없음
+    pass
+
+
+def signup_view(request):
+    # /signup/
+    # username, password, password2가 전달되었다는 가정
+    # username이 중복되는지 검사, 존재하지않으면 유저 생성 후 index로 이동
+    #   password, password2가 같은지도 확인
+    # 이외의경우는 다시 회원가입화면으로
+    return render(request, 'members/signup.html')

@@ -18,8 +18,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from members.views import login_view, signup_view
 from . import views
-from members.views import login_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +27,7 @@ urlpatterns = [
     # artist.urls모듈을 include하도록 설정
     path('', views.index, name='index'),
     path('login/', login_view, name='login'),
+    path('signup/', signup_view, name='signup'),
     path('artist/', include('artist.urls')),
     path('album/', include('album.urls')),
     path('song/', include('song.urls')),

@@ -32,3 +32,11 @@ a {
   clear: both;
   display: block;
 }
+
+.btn {
+  background-color: #00cd3c;
+  font-size: 20px;
+  padding: 17px 40px;
+  border: none;
+  color: white;
+}
