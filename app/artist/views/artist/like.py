@@ -24,4 +24,5 @@ def artist_like_toggle(request, artist_pk):
     artist = Artist.objects.get(pk=artist_pk)
     if request.method == 'POST':
         artist.toggle_like_user(user=request.user)
-        return redirect('artist:artist-list')
+        next_path = request.POST.get('next-path', 'artist:artist-list')
+        return redirect(next_path)

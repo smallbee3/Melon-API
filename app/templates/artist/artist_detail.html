@@ -5,9 +5,8 @@
 	<!-- artist-add로의 링크 생성 -->
 	<a href="{% url 'artist:artist-add' %}">아티스트 추가</a>
 	<ul class="clearfix">
-		{% for artist in artists %}
 		<li class="clearfix">
-			<a href="{% url 'artist:artist-detail' artist_pk=artist.pk %}">
+			<a href="">
 				<img src="{% if artist.img_profile %}{{ artist.img_profile.url }}{% endif %}" alt="" class="cover">
 				<div class="artist-info">
 					<div class="name">{{ artist.name }}</div>
@@ -21,6 +20,7 @@
 				<!-- artist_like_toggle을 실행할 form -->
 				<form action="{% url 'artist:artist-like-toggle' artist_pk=artist.pk %}" method="POST">
 					{% csrf_token %}
+					<input type="hidden" name="next-path" value="{{ request.get_full_path }}">
 					{% if request.user in artist.like_users.all %}
 						<button type="submit">좋아요 취소</button>
 					{% else %}
@@ -30,7 +30,6 @@
 				{% endif %}
 			</a>
 		</li>
-		{% endfor %}
 	</ul>
 </div>
 {% endblock %}
