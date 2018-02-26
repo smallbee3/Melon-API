@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.conf import settings
 from django.core.files import File
 from django.db import models
 
@@ -119,8 +120,78 @@ class Artist(models.Model):
         '소개',
         blank=True,
     )
+    like_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='ArtistLike',
+        related_name='like_artists',
+        blank=True,
+    )
 
     objects = ArtistManager()
 
     def __str__(self):
         return self.name
+
+    def toggle_like_user(self, user):
+        """
+        자신의 like_users에 주어진 user가 존재하지 않으면
+            like_users에 추가한다
+        이미 존재할 경우에는 없앤다
+        :param user:
+        :return:
+        """
+        # # 자신이 artist이며, 주어진 user와의 ArtistLike의 QuerySet
+        # query = ArtistLike.objects.filter(artist=self, user=user)
+        # # QuerySet이 존재할 경우
+        # if query.exists():
+        #     # 지워주고 False반환
+        #     query.delete()
+        #     return False
+        # # QuerySet이 존재하지 않을 경우
+        # else:
+        #     # 새로 ArtistLike를 생성하고 True반환
+        #     ArtistLike.objects.create(artist=self, user=user)
+        #     return True
+
+        # 자신이 'artist'이며 user가 주어진 user인 ArtistLike를 가져오거나 없으면 생성
+        like, like_created = self.like_user_info_list.get_or_create(user=user)
+        # 만약 이미 있었을 경우 (새로 생성되지 않았을 경우)
+        if not like_created:
+            # Like를 지워줌
+            like.delete()
+        # 생성여부를 반환 (Toggle후 현재 상태에 대한 True/False와 같은 결과)
+        return like_created
+
+
+class ArtistLike(models.Model):
+    # Artist와 User(members.User)와의 관계를 나타내는 중개모델
+    # settings.AUTH_USER_MODEL
+
+    # 다 작성 후에
+    # 임의의 유저에서 좋아하는 Artist추가해보기
+    # 임의의 Artist에서 좋아하고있는 유저 추가해보기
+    artist = models.ForeignKey(
+        Artist,
+        related_name='like_user_info_list',
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='like_artist_info_list',
+        on_delete=models.CASCADE,
+    )
+    created_date = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        unique_together = (
+            ('artist', 'user'),
+        )
+
+    def __str__(self):
+        return 'ArtistLike (User: {user}, Artist: {artist}, Created: {created})'.format(
+            user=self.user.username,
+            artist=self.artist.name,
+            created=datetime.strftime(self.created_date, '%y.%m.%d'),
+        )

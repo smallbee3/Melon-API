@@ -9,4 +9,15 @@ class User(AbstractUser):
     # makemigrations -> migrate
 
     # 데이터베이스에 member_user 테이블이 생성되었는지 확인
-    pass
+    def toggle_like_artist(self, artist):
+        """
+        이 User와 특정 Artist를 연결하는
+        중개모델인 ArtistLike인스턴스를
+            없을경우 생성, 있으면 삭제하는 메서드
+        :param artist:
+        :return:
+        """
+        like, like_created = self.like_artist_info_list.get_or_create(artist=artist)
+        if not like_created:
+            like.delete()
+        return like_created
