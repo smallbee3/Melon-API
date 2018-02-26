@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render
 
+from ...forms import ArtistForm
 from ...models import Artist
 
 __all__ = (
@@ -39,10 +40,17 @@ def artist_add(request):
     #       이후 'artist:artist-list'로 redirect
 
     if request.method == 'POST':
-        name = request.POST['name']
-        Artist.objects.create(
-            name=name,
-        )
-        return redirect('artist:artist-list')
+        # multipart/form-data로 전달된 파일은
+        # request.FILES 속성에 들어있음
+        # boundform을 만들 때, request.POST와 request.FILES를 전부 전달
+        form = ArtistForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('artist:artist-list')
     else:
-        return render(request, 'artist/artist_add.html')
+        form = ArtistForm()
+
+    context = {
+        'artist_form': form,
+    }
+    return render(request, 'artist/artist_add.html', context)
