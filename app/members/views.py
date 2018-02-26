@@ -43,6 +43,7 @@ def signup_view(request):
             return redirect('index')
     else:
         form = SignupForm()
+
     context = {
         'signup_form': form,
     }
