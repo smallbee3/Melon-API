@@ -57,27 +57,27 @@ class FacebookBackend:
             response_dict = response.json()
             return response_dict
 
+        # try:
+        access_token = get_access_token(code)
+        user_info = get_user_info(access_token)
+
+        facebook_id = user_info['id']
+        name = user_info['name']
+        first_name = user_info['first_name']
+        last_name = user_info['last_name']
+        url_picture = user_info['picture']['data']['url']
+
         try:
-            access_token = get_access_token(code)
-            user_info = get_user_info(access_token)
-
-            facebook_id = user_info['id']
-            name = user_info['name']
-            first_name = user_info['first_name']
-            last_name = user_info['last_name']
-            url_picture = user_info['picture']['data']['url']
-
-            try:
-                user = User.objects.get(username=facebook_id)
-            except User.DoesNotExist:
-                user = User.objects.create_user(
-                    username=facebook_id,
-                    first_name=first_name,
-                    last_name=last_name,
-                )
-            return user
-        except Exception:
-            return None
+            user = User.objects.get(username=facebook_id)
+        except User.DoesNotExist:
+            user = User.objects.create_user(
+                username=facebook_id,
+                first_name=first_name,
+                last_name=last_name,
+            )
+        return user
+        # except Exception:
+        #     return None
 
     def get_user(self, user_id):
         try:
