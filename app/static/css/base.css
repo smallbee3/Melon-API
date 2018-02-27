@@ -40,3 +40,12 @@ a {
   border: none;
   color: white;
 }
+
+.btn-facebook {
+  display: inline-block;
+  background-color: #3b5998;
+  font-size: 20px;
+  padding: 17px 40px;
+  border: none;
+  color: white;
+}

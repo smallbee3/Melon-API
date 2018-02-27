@@ -1,9 +1,11 @@
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth import authenticate, login, get_user_model
 from django.shortcuts import render, redirect
 
-from members.forms import SignupForm
-
 User = get_user_model()
+
+__all__ = (
+    'login_view',
+)
 
 
 def login_view(request):
@@ -23,28 +25,3 @@ def login_view(request):
             login(request, user)
             return redirect('index')
     return render(request, 'members/login.html')
-
-
-def logout_view(request):
-    # /logout/
-    # 문서에서 logout <- django logout 검색
-    # GET요청이든 POST요청이든 상관없음
-    logout(request)
-    return redirect('index')
-
-
-def signup_view(request):
-    if request.method == 'POST':
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            User.objects.create_user(username=username, password=password)
-            return redirect('index')
-    else:
-        form = SignupForm()
-
-    context = {
-        'signup_form': form,
-    }
-    return render(request, 'members/signup.html', context)
