@@ -1,9 +1,21 @@
 {% extends 'base.html' %}
+{% load song_extras %}
 
 {% block content %}
-	<ul>
+<div class="song-list-container">
+	<ul class="song-list">
 		{% for song in songs %}
-		<li>{{ song.title }}</li>
+		<li class="song-list-item clearfix">
+			<div class="li-section clearfix">
+				<div class="li-section-title">제목</div>
+				<div class="li-section-content">{{ song.title }}</div>
+			</div>
+			<div class="li-section clearfix">
+				<div class="li-section-title">가사</div>
+				<div class="li-section-content">{{ song.lyrics|ellipsis_line:3|linebreaksbr }}</div>
+			</div>
+		</li>
 		{% endfor %}
 	</ul>
+</div>
 {% endblock %}

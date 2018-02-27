@@ -1,0 +1,26 @@
+.song-list-container {
+  ul.song-list {
+    li.song-list-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      
+      .li-section {
+        margin-bottom: 6px;
+        
+        .li-section-title {
+          float: left;
+          margin-right: 10px;
+          font-weight: bold;
+        }
+        .li-section-content {
+          float: left;
+        }
+      }
+      
+      .lyrics {
+        
+      }
+    }
+  }
+}
