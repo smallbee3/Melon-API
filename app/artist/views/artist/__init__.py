@@ -1,5 +1,6 @@
 from .add import *
 from .add_from_melon import *
+from .add_youtube import *
 from .detail import *
 from .edit import *
 from .like import *
