@@ -4,7 +4,7 @@
 <div class="artist-list-container">
 	<!-- artist-add로의 링크 생성 -->
 	<a href="{% url 'artist:artist-add' %}">아티스트 추가</a>
-	<ul class="clearfix">
+	<ul class="artist-list clearfix">
 		{% for artist in artists %}
 		<li class="clearfix">
 			<a href="{% url 'artist:artist-detail' artist_pk=artist.pk %}">

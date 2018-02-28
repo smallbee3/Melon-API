@@ -1,4 +1,4 @@
-.artist-list-container ul li {
+.artist-list-container ul.artist-list li {
   float: left;
   width: 50%;
   box-sizing: border-box;
@@ -7,24 +7,24 @@
   height: 150px;
 }
 
-.artist-list-container ul li a {
+.artist-list-container ul.artist-list li a {
   display: inline-block;
   color: #333;
 }
 
-.artist-list-container ul li img.cover {
+.artist-list-container ul.artist-list li img.cover {
   float: left;
   width: 120px;
   height: 120px;
   border: 1px solid #ddd;
 }
 
-.artist-list-container ul li .artist-info {
+.artist-list-container ul.artist-list li .artist-info {
   float: left;
   padding: 5px 0 0 15px;
 }
 
-.artist-list-container ul li .artist-info .name {
+.artist-list-container ul.artist-list li .artist-info .name {
   font-weight: bold;
   font-size: 1.1rem;
   margin-bottom: 4px;

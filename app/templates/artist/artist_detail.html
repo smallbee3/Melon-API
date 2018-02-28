@@ -4,7 +4,7 @@
 <div class="artist-list-container">
 	<!-- artist-add로의 링크 생성 -->
 	<a href="{% url 'artist:artist-add' %}">아티스트 추가</a>
-	<ul class="clearfix">
+	<ul class="artist-list clearfix">
 		<li class="clearfix">
 			<a href="">
 				<img src="{% if artist.img_profile %}{{ artist.img_profile.url }}{% endif %}" alt="" class="cover">
@@ -30,6 +30,17 @@
 				{% endif %}
 			</a>
 		</li>
+	</ul>
+	<h3>관련 YouTube영상</h3>
+	<ul class="youtube-search-list">
+		{% for item in youtube_items %}
+		<li>
+			<a href="https://youtu.be/{{ item.id.videoId }}" target="_blank">
+				<img src="{{ item.snippet.thumbnails.medium.url }}" alt="">
+			</a>
+			<div>{{ item.snippet.title }}</div>
+		</li>
+		{% endfor %}
 	</ul>
 </div>
 {% endblock %}
