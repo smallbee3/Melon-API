@@ -33,9 +33,14 @@ def artist_list(request):
         'artists': [
             {
                 'melon_id': artist.melon_id,
-                'name': artist.name
+                'name': artist.name,
+                'img_profile': artist.img_profile.url if artist.img_profile else None,
             }
             for artist in artists],
+    }
+
+    data = {
+        'artists': [artist.to_json() for artist in artists],
     }
     # return HttpResponse(
     #     json.dumps(data),
