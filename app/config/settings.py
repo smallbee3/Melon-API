@@ -65,6 +65,7 @@ INSTALLED_APPS = [
 
     'corsheaders',
     'django_extensions',
+    'rest_framework',
 
     'album',
     'artist',

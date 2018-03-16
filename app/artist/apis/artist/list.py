@@ -2,7 +2,7 @@ import json
 
 from django.http import HttpResponse, JsonResponse
 
-from artist.models import Artist
+from ...models import Artist
 
 __all__ = (
     'artist_list',
