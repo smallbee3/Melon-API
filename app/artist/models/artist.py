@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.forms import model_to_dict
 
 from .artist_youtube import ArtistYouTube
 from .managers import ArtistManager
@@ -114,3 +115,44 @@ class Artist(models.Model):
             like.delete()
         # 생성여부를 반환 (Toggle후 현재 상태에 대한 True/False와 같은 결과)
         return like_created
+
+    def to_json(self):
+        from django.db.models.fields.files import FieldFile
+        from django.contrib.auth import get_user_model
+        user_class = get_user_model()
+
+        ret = model_to_dict(self)
+
+        # model_to_dict의 결과가 dict
+        # 해당 dict의 item을 순회하며
+        #   JSON Serialize할때 에러나는 타입의 value를
+        #   적절히 변환해서 value에 다시 대입
+        def convert_value(value):
+            if isinstance(value, FieldFile):
+                return value.url if value else None
+            elif isinstance(value, user_class):
+                return value.pk
+            elif isinstance(value, ArtistYouTube):
+                return value.pk
+            return value
+
+        def convert_obj(obj):
+            """
+            객체 또는 컨테이너 객체에 포함된 객체들 중
+            직렬화가 불가능한 객체를 가능하도록 형태를 변환해주는 함수
+            :param obj:
+            :return: convert_value()를 거친 객체
+            """
+            if isinstance(obj, list):
+                # list타입일 경우 각 항목을 순회하며 index에 해당하는 값을 변환
+                for index, item in enumerate(obj):
+                    obj[index] = convert_obj(item)
+            elif isinstance(obj, dict):
+                # dict타입일 경우 각 항목을 순회하며 key에 해당하는 값을 변환
+                for key, value in obj.items():
+                    obj[key] = convert_obj(value)
+            # list나 dict가 아닐 경우, 객체 자체를 변환한 값을 리턴
+            return convert_value(obj)
+
+        convert_obj(ret)
+        return ret

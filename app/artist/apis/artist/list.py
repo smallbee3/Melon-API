@@ -30,16 +30,6 @@ def artist_list(request):
     # localhost:8000/api/artist/
     artists = Artist.objects.all()
     data = {
-        'artists': [
-            {
-                'melon_id': artist.melon_id,
-                'name': artist.name,
-                'img_profile': artist.img_profile.url if artist.img_profile else None,
-            }
-            for artist in artists],
-    }
-
-    data = {
         'artists': [artist.to_json() for artist in artists],
     }
     # return HttpResponse(
