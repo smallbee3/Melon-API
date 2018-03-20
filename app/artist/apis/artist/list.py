@@ -42,11 +42,12 @@ class ArtistListCreateView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         print('request.user:', request.user)
+        return super().get(request, *args, **kwargs)
+
         # return self.list(request, *args, **kwargs)
         # 이렇게 해도 되지만...
         # 뒷부분은 굳이 실행할 필요가 없기때문에..
 
-        return super().get(request, *args, **kwargs)
 
     # def perform_create(self, serializer):
     #     serializer.save(owner=self.request.user)
