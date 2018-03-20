@@ -50,6 +50,16 @@ AUTHENTICATION_BACKENDS = [
     'members.backends.FacebookBackend',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
+
+
+
+
 # django-cors-headers
 CORS_ORIGIN_WHITELIST = (
     'localhost:3000',
@@ -66,6 +76,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_extensions',
     'rest_framework',
+    'rest_framework.authtoken',
 
     'album',
     'artist',
@@ -110,16 +121,32 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'fc-melon',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#         'USER': 'fc-7th',
+#         'PASSWORD': 'dlgksdud',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fc-melon',
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'USER': 'fc-7th',
-        'PASSWORD': 'dlgksdud',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'HOST': 'localhost',
+        # 'PORT': '5432',
+        # 'NAME': 'fc-melon',
+        # 'USER': 'smallbee3',
+        # 'PASSWORD': 'asdfqwer',
     }
 }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

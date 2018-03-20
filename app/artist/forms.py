@@ -1,5 +1,6 @@
 from django import forms
 
+# from artist.models import Artist
 from artist.models import Artist
 
 __all__ = (
