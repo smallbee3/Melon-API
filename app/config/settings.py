@@ -63,6 +63,7 @@ REST_FRAMEWORK = {
 # django-cors-headers
 CORS_ORIGIN_WHITELIST = (
     'localhost:3000',
+    '0.0.0.0:3000',
 )
 
 INSTALLED_APPS = [
