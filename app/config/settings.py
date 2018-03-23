@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
-
+import json
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -32,8 +32,6 @@ STATIC_URL = '/static/'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '_7+ljtll=#nxqj)#vc60@zdw&k$%96e6zx422yksyg@t)l&_ik'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,13 +40,44 @@ ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'members.User'
 # Application definition
 
-YOUTUBE_API_KEY = 'AIzaSyAXcxxlOahgGS3Jo0SINkbn8B_Uof5qHWE'
-FACEBOOK_APP_ID = '1655372997887280'
-FACEBOOK_SECRET_CODE = 'faa6f7d8ce69fa9b63e2a8ebba8b3a4e'
+# YOUTUBE_API_KEY = 'AIzaSyAXcxxlOahgGS3Jo0SINkbn8B_Uof5qHWE'
+
+# FACEBOOK_SECRET_CODE = 'faa6f7d8ce69fa9b63e2a8ebba8b3a4e'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'members.backends.FacebookBackend',
+    'members.backends.APIFacebookBackend',
 ]
+
+
+
+# SECRET #
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+SECRETS_DIR = os.path.join(ROOT_DIR, '.secrets')
+SECRETS_BASE = os.path.join(SECRETS_DIR, 'base.json')
+
+# 1) base.json 파일을 읽어온 결과
+f = open(SECRETS_BASE, 'rt')
+base_text = f.read()
+f.close()
+
+# 2) 위 결과(JSON형식의 문자열)를 파이선 객체로 변환
+secrets_base = json.loads(base_text)
+
+# print(secrets_base)
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = secrets_base['SECRET_KEY']
+YOUTUBE_API_KEY = secrets_base['YOUTUBE_API_KEY']
+FACEBOOK_APP_ID = secrets_base['FACEBOOK_APP_ID']
+FACEBOOK_SECRET_CODE = secrets_base['FACEBOOK_SECRET_CODE']
+EMAIL_HOST_PASSWORD = secrets_base['EMAIL_HOST_PASSWORD']
+SMS_API_KEY = secrets_base['SMS_API_KEY']
+SMS_API_SECRET = secrets_base['SMS_API_SECRET']
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+
+
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
