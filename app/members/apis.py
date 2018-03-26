@@ -12,22 +12,26 @@ from members.serializers import UserSerializer, AccessTokenSerializer
 
 
 class AuthTokenview(APIView):
+    """
+    POST 요청을 보내면 username, password를 받아서
+    다시 우리가 그 유저에 해당하는 토큰값을 보내주게 되있거든요. 일반적으로
+    """
 
     def post(self, request):
-
+        # 3/20 실습 (1)
         # URL: /api/members/auth-token/
+        # members.urls -> config.urls에서 include
+
         # username, password를 받음
-        # 유저인증에 성공했을 경우
-        # 토큰을 생성하거나 잇으면 존재하는 걸 가져와서
+        # 유저 인증에 성공했을 경우 -> authenticate
+
+        # 토큰을 생성하거나 있으면 존재하는걸 가져와서
+        # get_or_create
         # Response로 돌려줌
 
         # 방법1 - 직접 모든 과정 구현
-        # username = request.data['username']
-        # password = request.data['password']
-        # RESTFramework 쓸때는 data를 쓰는 것을 추천.
 
-        # AuthTokenSerializer를 사용해서 위 로직을 실행
-        #
+        # # RESTFramework 쓸때는 data를 쓰는 것을 추천.
         # username = request.data.get('username')
         # password = request.data.get('password')
         # user = authenticate(request, username=username, password=password)
@@ -43,19 +47,17 @@ class AuthTokenview(APIView):
         # raise AuthenticationFailed()
 
 
+        # 3/20 실습 (2)
+        # AuthTokenSerializer를 사용해서 위 로직을 실행
 
-        # 방법2 - Serialize 사용
+        # 방법2 - Serialize 사용 (유효성 검사)
+
+        # 1) 내 방법 - 오버라이딩 (실패)
         # serializer = MemberSerialize(data=request.data)
-
         # attrs = AuthSerialize.validate(request.data)
         # return Response(serializer.data)
 
-        # authenticate에 실패했을 때
-        # raise APIException('authenticate failure')
-        # raise AuthenticationFailed()
-
-
-        # 방법2-2 - Serialize + 유효성 검사
+        # 2) 수업시간실습
         # serializer = AuthTokenSerializer(data=request.data)
         # if serializer.is_valid():
         #     user = serializer.validated_data['user']
@@ -65,9 +67,8 @@ class AuthTokenview(APIView):
         #     }
         #     return Response(data)
 
-
-        # 방법2-3 - Serialize + 유효성 검사 + 예외처리를 위한 구조 변경
-        #                               (예외발생시 raise_exception=True에서 바로 에러발생)
+        # 3) 수업시간실습2 - 예외처리를 위한 구조 변경
+        #               (예외발생시 raise_exception=True에서 바로 에러발생)
         serializer = AuthTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
@@ -104,8 +105,8 @@ class AuthTokenForFacebookAccessTokenView(APIView):
         """
         access_token이라는 이름으로 1개의 데이터가 전달됨
         해당 데이터를 가지고 AccessTokenSerializer에서 validation
-        이 과정에서 authenticate가 이루어지며
-        authenticate에서 페이스북과 통신해서 유저정보를 받아옴
+        이 과정에서 authenticate가 (backends.py의 APIFacebookBackend에서)
+        이루어지며 authenticate에서 페이스북과 통신해서 유저정보를 받아옴
         받아온 유저정보와 일치하는 유저가 있으면 해당 유저를, 없으면 생성해서 반환
         리턴된 유저는 serializer의 validated_data의 'user'라는 키에
         """
@@ -116,6 +117,15 @@ class AuthTokenForFacebookAccessTokenView(APIView):
         # raise serializers.ValidationError가 발생하면
         # raise_exception=True옵션으로 인해 바로 에러가 발생하고
         # 하단의 과정은 생략됨. (right?)
+        # -> 위 추측 박살. AccessTokenSerializer를 거쳐
+        # APIFacebookBackend에서 user 유효성 검사를 할 때 없으면
+        # user를 만들어주기때문에 AccessTokenSerializer에서
+        # riase serializers.ValidationError가 발생하지 않는다.
+        # 즉, 위의 raise_exeption에 걸리는 애들은
+        # access_token이 전달되지 않은경우와(프론트가 안보내지 않는 이상 없음)
+        # access_token이 유효하지 않은경우(페이스북에서 해당 토큰 인증실패)의 경우
+        # 인데 위의 두 경우는 아래에서 토큰을 만들지 않고 생략되는게 맞다.
+        # 그러므로 이 코드가 올바른 것.
         user = serializer.validated_data['user']
         token, _ = Token.objects.get_or_create(user=user)
         data = {
